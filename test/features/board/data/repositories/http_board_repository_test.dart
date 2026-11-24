@@ -6,6 +6,7 @@ import 'package:http/testing.dart';
 
 import 'package:flutter_roomiehub/features/auth/data/repositories/http_auth_repository.dart';
 import 'package:flutter_roomiehub/features/board/data/repositories/http_board_repository.dart';
+import 'package:flutter_roomiehub/features/board/domain/entities/board_item.dart';
 
 void main() {
   test('notes come from the house: first line is the title, photos keep their thumbnail', () async {
@@ -19,7 +20,7 @@ void main() {
               '/auth/login' => {'accessToken': 'jwt', 'refreshToken': 'r', 'usuario': {'id': 1, 'nombre': 'Ana'}},
               '/salas/7/notas' when req.method == 'GET' => {
                   'fijadas': [
-                    {'id': 1, 'texto': 'Súper\nLeche\nPan', 'imagenMiniaturaUrl': null},
+                    {'id': 1, 'texto': 'Súper\nLeche\nPan', 'imagenMiniaturaUrl': null, 'likes': 2, 'dislikes': 1, 'miReaccion': 'DISLIKE'},
                   ],
                   'recientes': [
                     {'id': 2, 'texto': null, 'imagenMiniaturaUrl': 'http://img/2.jpg'},
@@ -51,5 +52,14 @@ void main() {
     expect(hasta.difference(DateTime.now()).inDays, 28);
     await repo.setPinned(2, false);
     expect(sent.keys, contains('DELETE /notas/2/fijada'));
+
+    expect((note.likes, note.dislikes, note.myReaction), (2, 1, Reaction.dislike));
+    expect((photo.likes, photo.myReaction), (0, null));
+    await repo.react(1, Reaction.like);
+    expect(sent['PUT /notas/1/reaccion'], {'tipo': 'LIKE'});
+    await repo.react(1, null);
+    expect(sent.keys, contains('DELETE /notas/1/reaccion'));
+    await repo.deleteNote(1);
+    expect(sent.keys, contains('DELETE /notas/1'));
   });
 }

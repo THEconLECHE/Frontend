@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/confirm_dialog.dart';
+import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/page_title.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../../auth/domain/usecases/get_current_user.dart';
@@ -106,6 +107,7 @@ class _FinancesPageState extends State<FinancesPage> {
       'Eliminar gasto',
       '«${expense.concept}» dejará de generar deudas. Las que ya existen quedan como historial.',
       'Eliminar',
+      destructive: true,
     );
     if (!ok) return;
     await _run(() async {
@@ -203,7 +205,7 @@ class _FinancesPageState extends State<FinancesPage> {
             const SizedBox(height: 16),
             if (_view == _View.expenses) ...[
               if (_expenses case final expenses? when expenses.isEmpty)
-                const _Empty('No hay gastos compartidos'),
+                const EmptyState('No hay gastos compartidos'),
               for (final expense in _expenses ?? const <Expense>[])
                 Card(
                   clipBehavior: Clip.antiAlias,
@@ -226,7 +228,7 @@ class _FinancesPageState extends State<FinancesPage> {
                 ),
             ] else ...[
               if (payments != null && payments.isEmpty)
-                _Empty(_view == _View.paid ? 'Aún no hay pagos completos' : 'Nadie debe nada. ¡Cuentas claras!'),
+                EmptyState(_view == _View.paid ? 'Aún no hay pagos completos' : 'Cuentas claras'),
               for (final payment in payments ?? const <Payment>[])
                 _PaymentCard(
                   payment,
@@ -248,16 +250,6 @@ class _FinancesPageState extends State<FinancesPage> {
       ),
     );
   }
-}
-
-class _Empty extends StatelessWidget {
-  const _Empty(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) =>
-      Padding(padding: const EdgeInsets.only(top: 48), child: Center(child: Text(text)));
 }
 
 class _PaymentCard extends StatelessWidget {

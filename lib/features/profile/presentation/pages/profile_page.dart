@@ -84,7 +84,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _delete() async {
-    if (await confirm(context, 'Eliminar cuenta', 'Se borra tu cuenta y no se puede deshacer.', 'Eliminar')) {
+    if (await confirm(context, 'Eliminar cuenta', 'Se borra tu cuenta y no se puede deshacer.', 'Eliminar',
+        destructive: true)) {
       await _run(widget.deleteAccount.call, exit: true);
     }
   }

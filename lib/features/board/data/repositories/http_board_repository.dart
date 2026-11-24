@@ -23,9 +23,14 @@ class HttpBoardRepository implements BoardRepository {
     final id = n['id'] as int;
     final lines = ((n['texto'] as String?) ?? '').split('\n');
     final photo = n['imagenMiniaturaUrl'] as String?;
+    final likes = (n['likes'] as int?) ?? 0;
+    final dislikes = (n['dislikes'] as int?) ?? 0;
+    final reaction = switch (n['miReaccion']) { 'LIKE' => Reaction.like, 'DISLIKE' => Reaction.dislike, _ => null };
     return photo != null
-        ? BoardItem.photo(id, lines.first, photo, pinned: pinned)
-        : BoardItem.note(id, lines.first, lines.sublist(1), pinned: pinned);
+        ? BoardItem.photo(id, lines.first, photo,
+            pinned: pinned, likes: likes, dislikes: dislikes, myReaction: reaction)
+        : BoardItem.note(id, lines.first, lines.sublist(1),
+            pinned: pinned, likes: likes, dislikes: dislikes, myReaction: reaction);
   }
 
   @override
@@ -39,4 +44,12 @@ class HttpBoardRepository implements BoardRepository {
           'hasta': DateTime.now().toUtc().add(const Duration(days: 29)).toIso8601String(),
         })
       : _auth.request('DELETE', '/notas/$noteId/fijada');
+
+  @override
+  Future<void> react(int noteId, Reaction? reaction) => reaction == null
+      ? _auth.request('DELETE', '/notas/$noteId/reaccion')
+      : _auth.request('PUT', '/notas/$noteId/reaccion', {'tipo': reaction.name.toUpperCase()});
+
+  @override
+  Future<void> deleteNote(int noteId) => _auth.request('DELETE', '/notas/$noteId');
 }

@@ -180,7 +180,7 @@ void main() {
 
     await tester.tap(find.byTooltip('Eliminar').last);
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(TextButton, 'Eliminar'));
+    await tester.tap(find.widgetWithText(FilledButton, 'Eliminar'));
     await tester.pumpAndSettle();
     expect(find.text('Internet'), findsNothing);
     expect(find.text('Renta'), findsOneWidget);

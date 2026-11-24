@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/member_avatar.dart';
 import '../../../../core/widgets/page_title.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
@@ -132,10 +133,7 @@ class _ChoresPageState extends State<ChoresPage> {
           ),
           const SizedBox(height: 16),
           if (chores != null && chores.isEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 48),
-              child: Center(child: Text(_onlyMine ? 'No tienes tareas asignadas' : 'No hay tareas. ¡Casa en orden!')),
-            ),
+            EmptyState(_onlyMine ? 'No tienes tareas asignadas' : 'No hay tareas'),
           for (final chore in sorted)
             Card(
               clipBehavior: Clip.antiAlias,

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/member_avatar.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../../auth/domain/usecases/get_current_user.dart';
@@ -85,7 +86,7 @@ class _ChatPageState extends State<ChatPage> {
       children: [
         Expanded(
           child: messages != null && messages.isEmpty
-              ? const Center(child: Text('Aún no hay mensajes. ¡Saluda a la casa!'))
+              ? const Center(child: EmptyState('Manda un mensaje para comenzar la conversación'))
               : ListView.builder(
                   // Invertida para empezar en el mensaje mas nuevo pegado abajo
                   reverse: true,

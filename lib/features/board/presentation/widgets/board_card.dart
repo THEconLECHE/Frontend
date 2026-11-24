@@ -49,6 +49,8 @@ class BoardCard extends StatelessWidget {
                 overflow: TextOverflow.fade,
                 style: const TextStyle(fontSize: 10, height: 1.8, color: Color(0xFF4B5563))),
           ),
+          if (item.likes + item.dislikes > 0)
+            Text('👍 ${item.likes}  👎 ${item.dislikes}', style: const TextStyle(fontSize: 9, color: BoardStyle.ink)),
         ],
       ),
     );

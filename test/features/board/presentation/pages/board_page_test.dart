@@ -4,8 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_roomiehub/features/board/data/repositories/in_memory_board_repository.dart';
 import 'package:flutter_roomiehub/features/board/domain/entities/board_item.dart';
 import 'package:flutter_roomiehub/features/board/domain/usecases/add_note.dart';
+import 'package:flutter_roomiehub/features/board/domain/usecases/delete_note.dart';
 import 'package:flutter_roomiehub/features/board/domain/usecases/get_notes.dart';
 import 'package:flutter_roomiehub/features/board/domain/usecases/pin_note.dart';
+import 'package:flutter_roomiehub/features/board/domain/usecases/react_to_note.dart';
 import 'package:flutter_roomiehub/features/board/presentation/pages/board_page.dart';
 import 'package:flutter_roomiehub/features/board/presentation/widgets/pinned.dart';
 
@@ -17,6 +19,8 @@ Widget _board(InMemoryBoardRepository repo, {bool isAdmin = false}) => MaterialA
       getNotes: GetNotes(repo),
       addNote: AddNote(repo),
       pinNote: PinNote(repo),
+      reactToNote: ReactToNote(repo),
+      deleteNote: DeleteNote(repo),
     ),
   ),
 );
@@ -67,6 +71,9 @@ void main() {
     await tester.longPress(find.text('Reunión'));
     await tester.pumpAndSettle();
     expect(find.text('Fijar nota'), findsNothing);
+    // Al soltar cuenta como toque y abre la hoja de la nota asi que se cierra
+    await tester.tapAt(const Offset(10, 10));
+    await tester.pumpAndSettle();
 
     await tester.pumpWidget(_board(repo, isAdmin: true));
     await tester.pumpAndSettle();
@@ -82,5 +89,45 @@ void main() {
     await tester.tap(find.text('Desfijar'));
     await tester.pumpAndSettle();
     expect(pinned().tacks, 1);
+  });
+
+  testWidgets('Tapping a note reacts: like, switch to dislike, tap again removes it', (tester) async {
+    final repo = InMemoryBoardRepository({
+      1: const [BoardItem.note(1, 'Reunión', ['Sala 3'], likes: 2)],
+    });
+    await tester.pumpWidget(_board(repo));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Reunión'));
+    await tester.pumpAndSettle();
+    // Un miembro no ve opciones de admin
+    expect(find.text('Eliminar'), findsNothing);
+
+    Future<(int, int)> counts() async => switch (await repo.getItems(1)) { [final n] => (n.likes, n.dislikes), _ => (-1, -1) };
+    await tester.tap(find.byTooltip('Me gusta'));
+    await tester.pumpAndSettle();
+    expect(await counts(), (3, 0));
+    await tester.tap(find.byTooltip('No me gusta'));
+    await tester.pumpAndSettle();
+    expect(await counts(), (2, 1));
+    await tester.tap(find.byTooltip('No me gusta'));
+    await tester.pumpAndSettle();
+    expect(await counts(), (2, 0));
+  });
+
+  testWidgets('Only the admin deletes a note after confirming', (tester) async {
+    final repo = InMemoryBoardRepository({
+      1: const [BoardItem.note(1, 'Reunión', ['Sala 3'])],
+    });
+    await tester.pumpWidget(_board(repo, isAdmin: true));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Reunión'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Eliminar'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Eliminar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Reunión'), findsNothing);
+    expect(find.text('Aún no hay notas'), findsOneWidget);
   });
 }

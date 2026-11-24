@@ -29,4 +29,19 @@ class InMemoryBoardRepository implements BoardRepository {
       pinned ? items.insert(0, note) : items.add(note);
     }
   }
+
+  @override
+  Future<void> react(int noteId, Reaction? reaction) async {
+    for (final items in _items.values) {
+      final i = items.indexWhere((n) => n.id == noteId);
+      if (i != -1) items[i] = items[i].withReaction(reaction);
+    }
+  }
+
+  @override
+  Future<void> deleteNote(int noteId) async {
+    for (final items in _items.values) {
+      items.removeWhere((n) => n.id == noteId);
+    }
+  }
 }

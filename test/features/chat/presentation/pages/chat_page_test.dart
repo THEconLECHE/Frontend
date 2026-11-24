@@ -24,7 +24,7 @@ void main() {
       ),
     ));
     await tester.pumpAndSettle();
-    expect(find.text('Aún no hay mensajes. ¡Saluda a la casa!'), findsOneWidget);
+    expect(find.text('Manda un mensaje para comenzar la conversación'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), '   ');
     await tester.tap(find.byTooltip('Enviar'));

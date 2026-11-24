@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -17,7 +18,9 @@ void main() {
     // La lista no trae miembros y el detalle si
     '/salas': [
       {'id': 7, 'nombre': 'Casa 304', 'codigoInvitacion': 'R9NUQGBV', 'miRol': 'ADMIN', 'miembros': []},
+      {'id': 8, 'nombre': 'Depa', 'codigoInvitacion': 'K2P8XQ4M', 'miRol': 'HABITANTE', 'miembros': []},
     ],
+    '/salas/8': {'id': 8, 'nombre': 'Depa', 'codigoInvitacion': 'K2P8XQ4M', 'miRol': 'HABITANTE', 'miembros': []},
     '/salas/7': {
       'id': 7,
       'nombre': 'Casa 304',
@@ -30,7 +33,7 @@ void main() {
     },
   };
 
-  Future<HttpHouseRepository> loggedIn(Map<String, Object?> sent) async {
+  Future<HttpHouseRepository> loggedIn(Map<String, Object?> sent, [FlutterSecureStorage? storage]) async {
     final auth = HttpAuthRepository(
       baseUrl: 'http://api',
       client: MockClient((req) async {
@@ -40,7 +43,7 @@ void main() {
       }),
     );
     await auth.login('ana@mail.com', 'secreta123');
-    return HttpHouseRepository(auth);
+    return HttpHouseRepository(auth, storage);
   }
 
   test('current house comes with its members and the user\'s role', () async {
@@ -51,6 +54,19 @@ void main() {
     expect(house.inviteCode, 'R9NUQGBV');
     expect(house.isAdmin, isTrue);
     expect([for (final m in house.members) (m.id, m.name, m.isAdmin)], [(2, 'Carlos', false), (1, 'Ana', true)]);
+  });
+
+  test('the chosen house is still the current one after reopening the app', () async {
+    FlutterSecureStorage.setMockInitialValues({});
+    const storage = FlutterSecureStorage();
+    final before = await loggedIn({}, storage);
+    expect((await before.getCurrentHouse())!.name, 'Casa 304');
+    before.select(8);
+    await Future<void>.delayed(Duration.zero);
+
+    // Un repositorio nuevo es como volver a abrir la app
+    final after = await loggedIn({}, storage);
+    expect((await after.getCurrentHouse())!.name, 'Depa');
   });
 
   test('admin actions hit their endpoints', () async {

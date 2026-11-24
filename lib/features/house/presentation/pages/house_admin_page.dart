@@ -51,13 +51,14 @@ class _HouseAdminPageState extends State<HouseAdminPage> {
       if (await confirm(context, 'Transferir administración', '${member.name} será el admin y tú dejarás de serlo.', 'Transferir')) {
         await _run(() => widget.transferAdmin(_house.id, member.id), close: true);
       }
-    } else if (await confirm(context, 'Expulsar', '¿Sacar a ${member.name} de la sala?', 'Expulsar')) {
+    } else if (await confirm(context, 'Expulsar', '¿Sacar a ${member.name} de la sala?', 'Expulsar', destructive: true)) {
       await _run(() => widget.expelMember(_house.id, member.id));
     }
   }
 
   Future<void> _deactivate() async {
-    if (await confirm(context, 'Desactivar sala', 'Nadie podrá usar ${_house.name} hasta que la reactives.', 'Desactivar')) {
+    if (await confirm(context, 'Desactivar sala', 'Nadie podrá usar ${_house.name} hasta que la reactives.', 'Desactivar',
+        destructive: true)) {
       await _run(() => widget.deactivateHouse(_house.id), close: true);
     }
   }

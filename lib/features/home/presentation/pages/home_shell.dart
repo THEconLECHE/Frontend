@@ -88,7 +88,7 @@ class _HomeShellState extends State<HomeShell> {
       case 'share':
         await _share(house);
       case 'leave':
-        if (!await confirm(context, 'Dejar sala', '¿Salir de ${house.name}?', 'Salir')) return;
+        if (!await confirm(context, 'Dejar sala', '¿Salir de ${house.name}?', 'Salir', destructive: true)) return;
         await _run(() => widget.leaveHouse(house.id), 'Saliste de ${house.name}');
       case 'admin':
         await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => widget.adminPage(house)));
@@ -210,8 +210,6 @@ class _HomeShellState extends State<HomeShell> {
     final house = _house;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
         title: house != null
             ? InkWell(
                 onTap: _switchHouse,
@@ -221,7 +219,7 @@ class _HomeShellState extends State<HomeShell> {
                     Flexible(
                       child: Text(house.name,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w500)),
+                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
                     ),
                     const Icon(Icons.arrow_drop_down, size: 32),
                   ],

@@ -15,8 +15,10 @@ import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/splash_page.dart';
 import 'features/board/data/repositories/http_board_repository.dart';
 import 'features/board/domain/usecases/add_note.dart';
+import 'features/board/domain/usecases/delete_note.dart';
 import 'features/board/domain/usecases/get_notes.dart';
 import 'features/board/domain/usecases/pin_note.dart';
+import 'features/board/domain/usecases/react_to_note.dart';
 import 'features/board/presentation/pages/board_page.dart';
 import 'features/chat/data/repositories/http_chat_repository.dart';
 import 'features/chat/domain/usecases/get_messages.dart';
@@ -59,7 +61,9 @@ import 'features/profile/presentation/pages/profile_page.dart';
 class RoomieHubApp extends StatelessWidget {
   // Los tests pasan un auth falso para no usar el backend
   RoomieHubApp({super.key, AuthRepository? auth})
-      : _auth = auth ?? HttpAuthRepository(pushToken: _fcmToken, storage: const FlutterSecureStorage());
+      : _auth = auth ?? HttpAuthRepository(pushToken: _fcmToken, storage: const FlutterSecureStorage()),
+        // Con el auth falso tampoco se guarda nada en el telefono
+        _storage = auth == null ? const FlutterSecureStorage() : null;
 
   // Android 13 en adelante e iOS piden permiso y si lo niegan no hay token
   static Future<String?> _fcmToken() async {
@@ -72,7 +76,8 @@ class RoomieHubApp extends StatelessWidget {
   }
 
   final AuthRepository _auth;
-  late final _house = HttpHouseRepository(_auth);
+  final FlutterSecureStorage? _storage;
+  late final _house = HttpHouseRepository(_auth, _storage);
   late final _board = HttpBoardRepository(_auth);
   late final _chores = HttpChoreRepository(_auth);
   late final _chat = HttpChatRepository(_auth);
@@ -107,6 +112,8 @@ class RoomieHubApp extends StatelessWidget {
                 getNotes: GetNotes(_board),
                 addNote: AddNote(_board),
                 pinNote: PinNote(_board),
+                reactToNote: ReactToNote(_board),
+                deleteNote: DeleteNote(_board),
               ),
               chores: (house) => ChoresPage(
                 houseId: house.id,
