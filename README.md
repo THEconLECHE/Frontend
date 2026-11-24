@@ -24,11 +24,12 @@ Por módulo y luego por capa, en `lib/features/<módulo>/` (auth, house, chores,
 ## Cómo correrlo
 
 1. Requisitos: Flutter SDK con Dart 3.13 o posterior y un emulador o teléfono Android.
-2. `flutter pub get`
-3. `flutter run` (usa la API en Render). Para una API local:
+2. `git clone https://github.com/THEconLECHE/Frontenb.git && cd Frontenb`
+3. `flutter pub get`
+4. `flutter run` (usa la API en Render). Para una API local:
    `flutter run --dart-define=API_URL=http://10.0.2.2:8080`
-4. Pruebas: `flutter test`
+5. Pruebas: `flutter test`
 
 ## Descargar APK
 
-[Descargar roomiehub.apk](https://github.com/Ardillatron/Frontonend/raw/main/apk/roomiehub.apk) (Android, apunta al backend en Render)
+[Descargar roomiehub.apk](https://github.com/THEconLECHE/Frontenb/raw/main/apk/roomiehub.apk) (Android, apunta al backend en Render)
