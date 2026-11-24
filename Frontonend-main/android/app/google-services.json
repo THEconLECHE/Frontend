@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "510653220568",
+    "project_id": "roomiehub-efc6f",
+    "storage_bucket": "roomiehub-efc6f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510653220568:android:2d4e968ade74a7c12e39ad",
+        "android_client_info": {
+          "package_name": "com.example.flutter_roomiehub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdoLsDM--J1W0dON2gN7H49pbQefki8nM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
