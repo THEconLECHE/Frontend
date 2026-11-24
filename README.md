@@ -2,7 +2,7 @@
 
 App para roomies: reparte los quehaceres según el esfuerzo acumulado de cada quien y registra los gastos compartidos
 y quién confirmó cada pago. La API, el diagrama de arquitectura y los ADRs están en
-[Ardillatron/RoomieHub_backend](https://github.com/Ardillatron/RoomieHub_backend).
+[Ardillatron/RoomieHub_espalda](https://github.com/Ardillatron/RoomieHub_espalda).
 
 ## Equipo
 
