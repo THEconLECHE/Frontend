@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import '../../domain/repositories/auth_repository.dart';
 
 // Backend en Render y para usarlo local se pasa API_URL al correr la app
-const apiUrl = String.fromEnvironment('API_URL', defaultValue: 'https://roomiehub-api.onrender.com');
+const apiUrl = String.fromEnvironment('API_URL', defaultValue: 'https://roomiehub-backend-mvg4.onrender.com');
 
 const _refreshKey = 'refreshToken';
 
